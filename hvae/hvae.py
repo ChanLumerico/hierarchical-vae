@@ -19,6 +19,7 @@ class Encoder(nn.Module):
         h = F.relu(self.linear(x))
         mu = self.linear_mu(h)
         logvar = self.linear_logvar(h)
+
         sigma = torch.exp(0.5 * logvar)
         return mu, sigma
 
@@ -144,6 +145,11 @@ if __name__ == "__main__":
     # Model & optimizer
     model = HierarchicalVAE(input_dim, hidden_dim, latent_dim, num_layers=num_layers)
     optimizer = optim.Adam(model.parameters(), lr=learning_rate)
+
+    def count_params(model: nn.Module) -> int:
+        return sum(param.numel() for param in model.parameters() if param.requires_grad)
+
+    print(f"Parameter Count: {count_params(model):,}\n")
 
     # Training loop
     losses = []
